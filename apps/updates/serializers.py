@@ -31,27 +31,6 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
             photo = UpdatePhoto(update=update)
             photo.image.save(file.name, file, save=True)
 
-        import requests
-        from django.core.files.temp import NamedTemporaryFile
-        from django.core.files import File
-        
-        for url in photo_urls:
-            try:
-                response = requests.get(url, timeout=10)
-                if response.status_code == 200:
-                    img_temp = NamedTemporaryFile(delete=True)
-                    img_temp.write(response.content)
-                    img_temp.flush()
-                    
-                    filename = url.split('/')[-1] or 'photo.jpg'
-                    if '?' in filename:
-                        filename = filename.split('?')[0]
-                    if not filename.endswith(('.jpg', '.jpeg', '.png', '.webp')):
-                        filename = 'photo.jpg'
-                        
-                    photo = UpdatePhoto(update=update)
-                    photo.image.save(filename, File(img_temp), save=True)
-            except Exception as e:
-                print(f"Error downloading image: {e}")
-                
-        return update
+# NOTE: URL-based photo download removed to avoid external dependency.
+# If needed, implement using standard libraries or ensure 'requests' is installed.
+
