@@ -148,10 +148,10 @@ SIMPLE_JWT = {
     'JTI_CLAIM': 'jti',
 }
 
-CORS_ALLOWED_ORIGINS = config(
+CORS_ALLOWED_ORIGINS = [origin.rstrip('/') for origin in config(
     'CORS_ORIGINS', 
     default='http://localhost:5173,http://localhost:5175,http://localhost:5176'
-).split(',')
+).split(',') if origin]
 
 # Storage configurations
 DEFAULT_FILE_STORAGE = config(
