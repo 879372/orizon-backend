@@ -15,6 +15,9 @@ class ProjectSerializer(serializers.ModelSerializer):
             'employees', 'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'progress_percentage', 'slug', 'created_at', 'updated_at']
+        extra_kwargs = {
+            'company': {'required': False, 'allow_null': True}
+        }
 
     def create(self, validated_data):
         cover_image_url = validated_data.pop('cover_image_url', None)
