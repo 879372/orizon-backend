@@ -11,4 +11,4 @@ class TransactionSerializer(serializers.ModelSerializer):
             'id', 'project', 'company', 'category', 'type', 'description',
             'amount', 'date', 'receipt', 'supplier', 'supplier_name', 'created_by', 'created_by_name', 'created_at'
         ]
-        read_only_fields = ['id', 'created_at']
+        read_only_fields = ['id', 'created_at', 'company', 'created_by']
