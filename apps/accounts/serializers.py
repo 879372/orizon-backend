@@ -1,6 +1,12 @@
 from rest_framework import serializers
 from .models import User
 from apps.companies.serializers import CompanySerializer
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    default_error_messages = {
+        'no_active_account': 'E-mail ou senha inválidos'
+    }
 
 class UserSerializer(serializers.ModelSerializer):
     company_info = CompanySerializer(source='company', read_only=True)

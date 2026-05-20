@@ -3,9 +3,9 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework.routers import DefaultRouter
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import TokenRefreshView
 
-from apps.accounts.views import MeView, AdminUserViewSet
+from apps.accounts.views import MeView, AdminUserViewSet, CustomTokenObtainPairView
 from apps.companies.views import AdminCompanyViewSet, CompanyMeViewSet
 from apps.projects.views import ProjectViewSet
 from apps.phases.views import PhaseCategoryViewSet, PhaseTaskViewSet
@@ -36,7 +36,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     
     # Auth endpoints
-    path('api/auth/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/auth/login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/auth/me/', MeView.as_view(), name='auth_me'),
     
