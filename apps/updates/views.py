@@ -23,6 +23,9 @@ class ProjectUpdateViewSet(viewsets.ModelViewSet):
                 qs = qs.filter(project__company_id=company_id)
         return qs
 
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user)
+
     @action(detail=True, methods=['post'])
     def photos(self, request, pk=None):
         update = self.get_object()
