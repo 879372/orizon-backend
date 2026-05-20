@@ -20,7 +20,7 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
             'id', 'project', 'title', 'description', 'phase_category',
             'phase_category_name', 'created_by', 'created_by_name', 'created_at', 'photos', 'photo_urls', 'uploaded_photos'
         ]
-        read_only_fields = ['id', 'created_at']
+        read_only_fields = ['id', 'created_at', 'created_by']
 
     def create(self, validated_data):
         photo_urls = validated_data.pop('photo_urls', [])
