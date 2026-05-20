@@ -11,4 +11,4 @@ class KanbanTaskSerializer(serializers.ModelSerializer):
             'id', 'project', 'company', 'title', 'description', 'column', 'priority',
             'assigned_to', 'assigned_employee_name', 'phase_task', 'phase_task_name', 'due_date', 'order', 'created_at'
         ]
-        read_only_fields = ['id', 'created_at']
+        read_only_fields = ['id', 'created_at', 'company']

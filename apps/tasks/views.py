@@ -11,6 +11,13 @@ class KanbanTaskViewSet(TenantScopedMixin, viewsets.ModelViewSet):
     serializer_class = KanbanTaskSerializer
     permission_classes = [IsCompanyMember]
 
+    def perform_create(self, serializer):
+        if self.request.user.role != 'super_admin':
+            serializer.save(company=self.request.user.company)
+        else:
+            project = serializer.validated_data.get('project')
+            serializer.save(company=project.company)
+
     @action(detail=True, methods=['post'])
     def move(self, request, pk=None):
         task = self.get_object()
