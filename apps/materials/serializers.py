@@ -13,4 +13,4 @@ class MaterialSerializer(serializers.ModelSerializer):
             'quantity_ordered', 'quantity_received', 'unit_cost', 'total_cost',
             'status', 'expected_date', 'is_low_stock', 'notes', 'created_at'
         ]
-        read_only_fields = ['id', 'created_at']
+        read_only_fields = ['id', 'created_at', 'company']
