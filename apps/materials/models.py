@@ -27,7 +27,8 @@ class Material(models.Model):
     
     @property
     def is_low_stock(self):
-        return self.quantity_received < (self.quantity_ordered * 0.2)
+        from decimal import Decimal
+        return self.quantity_received < (self.quantity_ordered * Decimal('0.2'))
 
     def __str__(self):
         return self.name

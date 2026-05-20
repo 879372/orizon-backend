@@ -151,7 +151,7 @@ SIMPLE_JWT = {
 
 CORS_ALLOWED_ORIGINS = config(
     'CORS_ORIGINS', 
-    default='http://localhost:5173,http://localhost:5175'
+    default='http://localhost:5173,http://localhost:5175,http://localhost:5176'
 ).split(',')
 
 # Storage configurations
