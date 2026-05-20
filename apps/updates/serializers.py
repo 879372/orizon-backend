@@ -12,19 +12,25 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
     created_by_name = serializers.CharField(source='created_by.name', read_only=True)
     phase_category_name = serializers.CharField(source='phase_category.name', read_only=True)
     photo_urls = serializers.ListField(child=serializers.CharField(), write_only=True, required=False)
+    uploaded_photos = serializers.ListField(child=serializers.ImageField(), write_only=True, required=False)
 
     class Meta:
         model = ProjectUpdate
         fields = [
             'id', 'project', 'title', 'description', 'phase_category',
-            'phase_category_name', 'created_by', 'created_by_name', 'created_at', 'photos', 'photo_urls'
+            'phase_category_name', 'created_by', 'created_by_name', 'created_at', 'photos', 'photo_urls', 'uploaded_photos'
         ]
         read_only_fields = ['id', 'created_at']
 
     def create(self, validated_data):
         photo_urls = validated_data.pop('photo_urls', [])
+        uploaded_photos = validated_data.pop('uploaded_photos', [])
         update = super().create(validated_data)
         
+        for file in uploaded_photos:
+            photo = UpdatePhoto(update=update)
+            photo.image.save(file.name, file, save=True)
+
         import requests
         from django.core.files.temp import NamedTemporaryFile
         from django.core.files import File
