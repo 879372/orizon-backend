@@ -167,21 +167,36 @@ CORS_ALLOWED_ORIGINS = [origin.rstrip('/') for origin in config(
     default='http://localhost:5173,http://localhost:5175,http://localhost:5176'
 ).split(',') if origin]
 
-# Storage configurations
+# Storage configurations (compatível com AWS S3 e Cloudflare R2)
 AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID', default=None)
 AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY', default=None)
 AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME', default=None)
 AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME', default='us-east-1')
 AWS_S3_SIGNATURE_VERSION = 's3v4'
-AWS_DEFAULT_ACL = 'public-read'
 AWS_S3_FILE_OVERWRITE = False
 AWS_QUERYSTRING_AUTH = False  # URLs públicas sem parâmetros de autenticação
 
-# Custom domain para URLs das fotos (ex: https://bucket.s3.region.amazonaws.com)
-_bucket = config('AWS_STORAGE_BUCKET_NAME', default=None)
-_region = config('AWS_S3_REGION_NAME', default='us-east-1')
-if _bucket:
+# Endpoint customizado — obrigatório para Cloudflare R2
+# Formato R2: https://<ACCOUNT_ID>.r2.cloudflarestorage.com
+AWS_S3_ENDPOINT_URL = config('AWS_S3_ENDPOINT_URL', default=None)
+
+# ACL: R2 não suporta ACLs, deixar None. AWS S3 pode usar 'public-read'.
+# Se usar R2, mantenha vazio/None e configure o acesso pelo painel do R2.
+_acl = config('AWS_DEFAULT_ACL', default='')
+AWS_DEFAULT_ACL = _acl if _acl else None
+
+# Domínio público para as URLs das fotos
+# R2: defina a URL pública do bucket (ex: https://pub-xxx.r2.dev)
+# S3: será auto-gerado a partir do bucket+region se não definido
+_custom_domain = config('AWS_S3_CUSTOM_DOMAIN', default='')
+if _custom_domain:
+    AWS_S3_CUSTOM_DOMAIN = _custom_domain
+elif config('AWS_STORAGE_BUCKET_NAME', default=None) and not config('AWS_S3_ENDPOINT_URL', default=None):
+    # Apenas auto-gera para AWS S3 padrão (não R2)
+    _bucket = config('AWS_STORAGE_BUCKET_NAME', default=None)
+    _region = config('AWS_S3_REGION_NAME', default='us-east-1')
     AWS_S3_CUSTOM_DOMAIN = f'{_bucket}.s3.{_region}.amazonaws.com'
+
 
 DRF_SPECTACULAR_SETTINGS = {
     'TITLE': 'Orizon Construtora API',
