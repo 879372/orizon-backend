@@ -24,6 +24,8 @@ class UserManager(BaseUserManager):
 
         return self.create_user(email, password, **extra_fields)
 
+from core.fields import CompressedImageField
+
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     email = models.EmailField(unique=True)
@@ -36,7 +38,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         ('client', 'Client'),
     ])
     company = models.ForeignKey('companies.Company', on_delete=models.SET_NULL, null=True, blank=True)
-    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+    avatar = CompressedImageField(upload_to='avatars/', null=True, blank=True, max_width=500, max_height=500)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)

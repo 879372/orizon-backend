@@ -1,5 +1,6 @@
 from django.db import models
 from uuid import uuid4
+from core.fields import CompressedImageField
 
 class ProjectUpdate(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
@@ -15,7 +16,7 @@ class ProjectUpdate(models.Model):
 
 class UpdatePhoto(models.Model):
     update = models.ForeignKey(ProjectUpdate, on_delete=models.CASCADE, related_name='photos')
-    image = models.ImageField(upload_to='updates/%Y/%m/')
+    image = CompressedImageField(upload_to='updates/%Y/%m/', max_width=1200, max_height=1200)
     caption = models.CharField(max_length=200, blank=True)
     order = models.PositiveIntegerField(default=0)
 

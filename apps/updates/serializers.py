@@ -28,9 +28,8 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
         update = super().create(validated_data)
 
         for file in uploaded_photos:
-            photo = UpdatePhoto(update=update)
-            # O campo image.save() usa o storage configurado (S3 ou local)
-            photo.image.save(file.name, file, save=True)
+            photo = UpdatePhoto(update=update, image=file)
+            photo.save()
 
         return update
 

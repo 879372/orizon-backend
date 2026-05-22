@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.text import slugify
 from uuid import uuid4
+from core.fields import CompressedImageField
 
 class Project(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
@@ -23,7 +24,7 @@ class Project(models.Model):
     progress_percentage = models.DecimalField(
         max_digits=5, decimal_places=2, default=0.00
     )  # auto-calculated from phases
-    cover_image = models.ImageField(upload_to='projects/', null=True, blank=True)
+    cover_image = CompressedImageField(upload_to='projects/', null=True, blank=True, max_width=1200, max_height=1200)
     slug = models.SlugField(unique=True, blank=True)  # auto-generated on save
     employees = models.ManyToManyField('employees.Employee', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

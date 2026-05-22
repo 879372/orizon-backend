@@ -1,5 +1,6 @@
 from django.db import models
 from uuid import uuid4
+from core.fields import CompressedImageField
 
 class Employee(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
@@ -11,7 +12,7 @@ class Employee(models.Model):
     email = models.EmailField(blank=True)
     daily_rate = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     is_active = models.BooleanField(default=True)
-    avatar = models.ImageField(upload_to='employees/', null=True, blank=True)
+    avatar = CompressedImageField(upload_to='employees/', null=True, blank=True, max_width=500, max_height=500)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

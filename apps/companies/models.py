@@ -1,5 +1,6 @@
 from django.db import models
 from uuid import uuid4
+from core.fields import CompressedImageField
 
 class Company(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
@@ -8,7 +9,7 @@ class Company(models.Model):
     email = models.EmailField()
     phone = models.CharField(max_length=20)
     address = models.TextField(blank=True)
-    logo = models.ImageField(upload_to='logos/', null=True, blank=True)
+    logo = CompressedImageField(upload_to='logos/', null=True, blank=True, max_width=600, max_height=600)
     plan = models.CharField(max_length=20, choices=[
         ('basic', 'Basic'),
         ('pro', 'Pro'),
