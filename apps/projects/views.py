@@ -283,3 +283,31 @@ class ProjectViewSet(TenantScopedMixin, viewsets.ModelViewSet):
             'total_expense': total_expense,
             'balance': balance
         })
+
+    @action(detail=False, methods=['get'], url_path='public/(?P<project_id>[-\\w]+)/evolution', permission_classes=[permissions.AllowAny])
+    def public_evolution(self, request, project_id=None):
+        try:
+            project = Project.objects.get(id=project_id)
+        except Project.DoesNotExist:
+            return Response({"detail": "Projeto não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Obter dados básicos do projeto
+        project_data = ProjectSerializer(project).data
+        
+        # Obter etapas
+        from apps.phases.models import PhaseCategory
+        from apps.phases.serializers import PhaseCategorySerializer
+        categories = PhaseCategory.objects.filter(project=project)
+        categories_data = PhaseCategorySerializer(categories, many=True).data
+
+        # Obter atualizações (Diário)
+        from apps.updates.models import ProjectUpdate
+        from apps.updates.serializers import ProjectUpdateSerializer
+        updates = ProjectUpdate.objects.filter(project=project).order_by('-created_at')
+        updates_data = ProjectUpdateSerializer(updates, many=True).data
+
+        return Response({
+            'project': project_data,
+            'categories': categories_data,
+            'updates': updates_data
+        })
