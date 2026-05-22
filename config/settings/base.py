@@ -174,7 +174,7 @@ AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME', default=None)
 AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME', default='us-east-1')
 AWS_S3_SIGNATURE_VERSION = 's3v4'
 AWS_S3_FILE_OVERWRITE = False
-AWS_QUERYSTRING_AUTH = False  # URLs públicas sem parâmetros de autenticação
+AWS_QUERYSTRING_AUTH = True  # Gera URLs assinadas (pre-signed URLs) para permitir o acesso mesmo em buckets privados
 
 # Endpoint customizado — obrigatório para Cloudflare R2
 # Formato R2: https://<ACCOUNT_ID>.r2.cloudflarestorage.com
