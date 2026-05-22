@@ -44,11 +44,10 @@ class CompressedImageField(ImageField):
         super().__init__(*args, **kwargs)
         
     def pre_save(self, model_instance, add):
-        file = super().pre_save(model_instance, add)
-        # If it is a newly uploaded file in the request
-        if file and hasattr(file, 'file') and isinstance(file.file, UploadedFile):
+        file = getattr(model_instance, self.attname)
+        if file and not file._committed and hasattr(file, 'file') and isinstance(file.file, UploadedFile):
             compressed = compress_image(file, self.max_width, self.max_height, self.quality)
             if compressed:
-                setattr(model_instance, self.name, compressed)
-                file = compressed
-        return file
+                file.file = compressed
+                file.name = compressed.name
+        return super().pre_save(model_instance, add)
