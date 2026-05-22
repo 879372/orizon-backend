@@ -26,11 +26,11 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
         photo_urls = validated_data.pop('photo_urls', [])
         uploaded_photos = validated_data.pop('uploaded_photos', [])
         update = super().create(validated_data)
-        
+
         for file in uploaded_photos:
             photo = UpdatePhoto(update=update)
+            # O campo image.save() usa o storage configurado (S3 ou local)
             photo.image.save(file.name, file, save=True)
 
-# NOTE: URL-based photo download removed to avoid external dependency.
-# If needed, implement using standard libraries or ensure 'requests' is installed.
+        return update
 

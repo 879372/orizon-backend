@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_filters',
     'drf_spectacular',
+    'storages',
     
     # Local apps
     'apps.accounts.apps.AccountsConfig',
@@ -109,6 +110,19 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Storages (Django 4.2+ style)
+STORAGES = {
+    'default': {
+        'BACKEND': config(
+            'FILE_STORAGE',
+            default='django.core.files.storage.FileSystemStorage'
+        ),
+    },
+    'staticfiles': {
+        'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage',
+    },
+}
+
 # REST Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -154,16 +168,20 @@ CORS_ALLOWED_ORIGINS = [origin.rstrip('/') for origin in config(
 ).split(',') if origin]
 
 # Storage configurations
-DEFAULT_FILE_STORAGE = config(
-    'FILE_STORAGE',
-    default='django.core.files.storage.FileSystemStorage'
-)
-
 AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID', default=None)
 AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY', default=None)
 AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME', default=None)
 AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME', default='us-east-1')
 AWS_S3_SIGNATURE_VERSION = 's3v4'
+AWS_DEFAULT_ACL = 'public-read'
+AWS_S3_FILE_OVERWRITE = False
+AWS_QUERYSTRING_AUTH = False  # URLs públicas sem parâmetros de autenticação
+
+# Custom domain para URLs das fotos (ex: https://bucket.s3.region.amazonaws.com)
+_bucket = config('AWS_STORAGE_BUCKET_NAME', default=None)
+_region = config('AWS_S3_REGION_NAME', default='us-east-1')
+if _bucket:
+    AWS_S3_CUSTOM_DOMAIN = f'{_bucket}.s3.{_region}.amazonaws.com'
 
 DRF_SPECTACULAR_SETTINGS = {
     'TITLE': 'Orizon Construtora API',
