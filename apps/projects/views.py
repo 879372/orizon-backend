@@ -79,15 +79,15 @@ class ProjectViewSet(TenantScopedMixin, viewsets.ModelViewSet):
             transactions = transactions.filter(company=request.user.company)
 
         contributions = ClientContribution.objects.filter(project=project, status='paid')
-        total_income = contributions.aggregate(Sum('amount'))['amount__sum'] or 0.00
+        total_income = contributions.aggregate(Sum('amount'))['amount__sum'] or 0
         
-        total_expense = transactions.filter(type='expense').aggregate(Sum('amount'))['amount__sum'] or 0.00
+        total_expense = transactions.filter(type='expense').aggregate(Sum('amount'))['amount__sum'] or 0
         balance = total_income - total_expense
 
         categories = ExpenseCategory.objects.filter(company=project.company)
         category_summaries = {}
         for cat in categories:
-            cat_expense = transactions.filter(category=cat, type='expense').aggregate(Sum('amount'))['amount__sum'] or 0.00
+            cat_expense = transactions.filter(category=cat, type='expense').aggregate(Sum('amount'))['amount__sum'] or 0
             if cat_expense > 0:
                 category_summaries[cat.name] = cat_expense
 
@@ -280,15 +280,24 @@ class ProjectViewSet(TenantScopedMixin, viewsets.ModelViewSet):
         transactions = Transaction.objects.filter(project=project)
         
         contributions = ClientContribution.objects.filter(project=project, status='paid')
-        total_income = contributions.aggregate(Sum('amount'))['amount__sum'] or 0.00
+        total_income = contributions.aggregate(Sum('amount'))['amount__sum'] or 0
         
-        total_expense = transactions.filter(type='expense').aggregate(Sum('amount'))['amount__sum'] or 0.00
+        total_expense = transactions.filter(type='expense').aggregate(Sum('amount'))['amount__sum'] or 0
         balance = total_income - total_expense
+
+        from apps.financial.models import ExpenseCategory
+        categories = ExpenseCategory.objects.filter(company=project.company)
+        category_summaries = {}
+        for cat in categories:
+            cat_expense = transactions.filter(category=cat, type='expense').aggregate(Sum('amount'))['amount__sum'] or 0
+            if cat_expense > 0:
+                category_summaries[cat.name] = cat_expense
 
         return Response({
             'total_income': total_income,
             'total_expense': total_expense,
-            'balance': balance
+            'balance': balance,
+            'category_expenses': category_summaries
         })
 
     @action(detail=False, methods=['get'], url_path='public/(?P<project_id>[-\\w]+)/evolution', permission_classes=[permissions.AllowAny])

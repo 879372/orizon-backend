@@ -9,7 +9,7 @@ from apps.accounts.views import MeView, AdminUserViewSet, CustomTokenObtainPairV
 from apps.companies.views import AdminCompanyViewSet, CompanyMeViewSet, PartnerViewSet
 from apps.projects.views import ProjectViewSet
 from apps.phases.views import PhaseCategoryViewSet, PhaseTaskViewSet
-from apps.financial.views import TransactionViewSet, ExpenseCategoryViewSet, ClientContributionViewSet
+from apps.financial.views import TransactionViewSet, ExpenseCategoryViewSet, ClientContributionViewSet, GlobalFinancialSummaryViewSet
 from apps.materials.views import MaterialViewSet
 from apps.employees.views import EmployeeViewSet
 from apps.suppliers.views import SupplierViewSet
@@ -29,6 +29,7 @@ router.register('phases/tasks', PhaseTaskViewSet, basename='phase-task')
 router.register('transactions', TransactionViewSet, basename='transaction')
 router.register('financial/categories', ExpenseCategoryViewSet, basename='expense-category')
 router.register('financial/contributions', ClientContributionViewSet, basename='client-contribution')
+router.register('financial/global-summary', GlobalFinancialSummaryViewSet, basename='global-financial-summary')
 router.register('materials', MaterialViewSet, basename='material')
 router.register('employees', EmployeeViewSet, basename='employee')
 router.register('suppliers', SupplierViewSet, basename='supplier')

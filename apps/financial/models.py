@@ -32,7 +32,7 @@ class ClientContribution(models.Model):
 
 class Transaction(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    project = models.ForeignKey('projects.Project', on_delete=models.CASCADE, related_name='transactions')
+    project = models.ForeignKey('projects.Project', on_delete=models.CASCADE, related_name='transactions', null=True, blank=True)
     company = models.ForeignKey('companies.Company', on_delete=models.CASCADE)
     category = models.ForeignKey(ExpenseCategory, on_delete=models.SET_NULL, null=True, blank=True)
     type = models.CharField(max_length=10, choices=[('income', 'Entrada'), ('expense', 'Saída')])

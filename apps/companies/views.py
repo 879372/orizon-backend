@@ -177,3 +177,38 @@ class PartnerViewSet(TenantScopedMixin, viewsets.ModelViewSet):
             serializer.save(company=self.request.user.company)
         else:
             serializer.save()
+
+    @action(detail=False, methods=['get'])
+    def distribution(self, request):
+        company = request.user.company
+        if not company:
+            return Response({"detail": "Usuário não associado a uma empresa."}, status=status.HTTP_400_BAD_REQUEST)
+            
+        from apps.financial.models import Transaction, ClientContribution
+        from django.db.models import Sum
+
+        total_expense = Transaction.objects.filter(company=company, type='expense').aggregate(Sum('amount'))['amount__sum'] or 0
+        total_contributions = ClientContribution.objects.filter(project__company=company, status='paid').aggregate(Sum('amount'))['amount__sum'] or 0
+        total_generic_income = Transaction.objects.filter(company=company, type='income', project__isnull=True).aggregate(Sum('amount'))['amount__sum'] or 0
+        
+        total_income = total_contributions + total_generic_income
+        total_profit = float(total_income - total_expense)
+        
+        partners = Partner.objects.filter(company=company, is_active=True)
+        distribution = []
+        for p in partners:
+            base = float(p.base_salary)
+            pct = float(p.profit_percentage)
+            profit_share = total_profit * (pct / 100) if total_profit > 0 else 0
+            distribution.append({
+                'id': p.id,
+                'name': p.name,
+                'base_salary': base,
+                'profit_percentage': pct,
+                'total_calculated': base + profit_share
+            })
+            
+        return Response({
+            'total_profit': total_profit,
+            'distribution': distribution
+        })
