@@ -174,13 +174,18 @@ class Command(BaseCommand):
             }
         )
 
+        # 6.5 Expense Categories
+        from apps.financial.models import ExpenseCategory
+        cat_other, _ = ExpenseCategory.objects.get_or_create(company=company, name="Outros", defaults={"color": "#607d8b", "is_default": True})
+        cat_material, _ = ExpenseCategory.objects.get_or_create(company=company, name="Material", defaults={"color": "#795548", "is_default": True})
+
         # 7. Financial Transactions
         Transaction.objects.get_or_create(
             project=project,
             company=company,
             description="Aporte Inicial de Contrato",
             defaults={
-                "category": "other",
+                "category": cat_other,
                 "type": "income",
                 "amount": 500000.00,
                 "date": date(2026, 1, 15),
@@ -192,7 +197,7 @@ class Command(BaseCommand):
             company=company,
             description="Compra de Vergalhões Gerdau",
             defaults={
-                "category": "material",
+                "category": cat_material,
                 "type": "expense",
                 "amount": 16400.00,
                 "date": date(2026, 2, 5),

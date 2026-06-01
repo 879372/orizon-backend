@@ -71,21 +71,25 @@ class ProjectViewSet(TenantScopedMixin, viewsets.ModelViewSet):
     @action(detail=True, methods=['get'], url_path='financial/summary')
     def financial_summary(self, request, pk=None):
         project = self.get_object()
-        from apps.financial.models import Transaction
+        from apps.financial.models import Transaction, ClientContribution, ExpenseCategory
         from django.db.models import Sum
 
         transactions = Transaction.objects.filter(project=project)
         if request.user.role != 'super_admin':
             transactions = transactions.filter(company=request.user.company)
 
-        total_income = transactions.filter(type='income').aggregate(Sum('amount'))['amount__sum'] or 0.00
+        contributions = ClientContribution.objects.filter(project=project, status='paid')
+        total_income = contributions.aggregate(Sum('amount'))['amount__sum'] or 0.00
+        
         total_expense = transactions.filter(type='expense').aggregate(Sum('amount'))['amount__sum'] or 0.00
         balance = total_income - total_expense
 
-        categories = ['labor', 'material', 'equipment', 'other']
+        categories = ExpenseCategory.objects.filter(company=project.company)
         category_summaries = {}
         for cat in categories:
-            category_summaries[cat] = transactions.filter(category=cat, type='expense').aggregate(Sum('amount'))['amount__sum'] or 0.00
+            cat_expense = transactions.filter(category=cat, type='expense').aggregate(Sum('amount'))['amount__sum'] or 0.00
+            if cat_expense > 0:
+                category_summaries[cat.name] = cat_expense
 
         return Response({
             'total_income': total_income,
@@ -271,10 +275,13 @@ class ProjectViewSet(TenantScopedMixin, viewsets.ModelViewSet):
         if not settings or not settings.show_financial_to_client:
             return Response({"detail": "Informações financeiras não compartilhadas com o cliente."}, status=status.HTTP_403_FORBIDDEN)
         
-        from apps.financial.models import Transaction
+        from apps.financial.models import Transaction, ClientContribution
         from django.db.models import Sum
         transactions = Transaction.objects.filter(project=project)
-        total_income = transactions.filter(type='income').aggregate(Sum('amount'))['amount__sum'] or 0.00
+        
+        contributions = ClientContribution.objects.filter(project=project, status='paid')
+        total_income = contributions.aggregate(Sum('amount'))['amount__sum'] or 0.00
+        
         total_expense = transactions.filter(type='expense').aggregate(Sum('amount'))['amount__sum'] or 0.00
         balance = total_income - total_expense
 

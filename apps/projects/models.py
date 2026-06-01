@@ -21,6 +21,8 @@ class Project(models.Model):
         ('completed', 'Concluída'),
     ], default='not_started')
     total_budget = models.DecimalField(max_digits=12, decimal_places=2)
+    quantity_units = models.PositiveIntegerField(default=1)
+    value_per_unit = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     progress_percentage = models.DecimalField(
         max_digits=5, decimal_places=2, default=0.00
     )  # auto-calculated from phases
@@ -29,6 +31,14 @@ class Project(models.Model):
     employees = models.ManyToManyField('employees.Employee', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    @property
+    def total_contract_value(self):
+        return self.quantity_units * self.value_per_unit
+
+    @property
+    def total_labor_cost(self):
+        return self.quantity_units * self.cost_per_unit
 
     def recalculate_progress(self):
         categories = self.phase_categories.all()

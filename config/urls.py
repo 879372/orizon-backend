@@ -6,10 +6,10 @@ from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenRefreshView
 
 from apps.accounts.views import MeView, AdminUserViewSet, CustomTokenObtainPairView
-from apps.companies.views import AdminCompanyViewSet, CompanyMeViewSet
+from apps.companies.views import AdminCompanyViewSet, CompanyMeViewSet, PartnerViewSet
 from apps.projects.views import ProjectViewSet
 from apps.phases.views import PhaseCategoryViewSet, PhaseTaskViewSet
-from apps.financial.views import TransactionViewSet
+from apps.financial.views import TransactionViewSet, ExpenseCategoryViewSet, ClientContributionViewSet
 from apps.materials.views import MaterialViewSet
 from apps.employees.views import EmployeeViewSet
 from apps.suppliers.views import SupplierViewSet
@@ -22,10 +22,13 @@ router = DefaultRouter()
 router.register('admin/users', AdminUserViewSet, basename='admin-user')
 router.register('admin/companies', AdminCompanyViewSet, basename='admin-company')
 router.register('companies/me', CompanyMeViewSet, basename='company-me')
+router.register('partners', PartnerViewSet, basename='partner')
 router.register('projects', ProjectViewSet, basename='project')
 router.register('phases/categories', PhaseCategoryViewSet, basename='phase-category')
 router.register('phases/tasks', PhaseTaskViewSet, basename='phase-task')
 router.register('transactions', TransactionViewSet, basename='transaction')
+router.register('financial/categories', ExpenseCategoryViewSet, basename='expense-category')
+router.register('financial/contributions', ClientContributionViewSet, basename='client-contribution')
 router.register('materials', MaterialViewSet, basename='material')
 router.register('employees', EmployeeViewSet, basename='employee')
 router.register('suppliers', SupplierViewSet, basename='supplier')

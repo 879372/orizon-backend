@@ -29,3 +29,15 @@ class CompanySettings(models.Model):
 
     def __str__(self):
         return f"Settings for {self.company.name}"
+
+class Partner(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='partners')
+    name = models.CharField(max_length=100)
+    base_salary = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+    profit_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.company.name})"

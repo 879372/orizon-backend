@@ -9,6 +9,8 @@ class ProjectUpdate(models.Model):
     description = models.TextField()
     phase_category = models.ForeignKey('phases.PhaseCategory', on_delete=models.SET_NULL, null=True, blank=True)
     created_by = models.ForeignKey('accounts.User', on_delete=models.CASCADE)
+    video_url = models.URLField(blank=True, null=True, help_text="Link para vídeo (YouTube, Vimeo, etc)")
+    video_file = models.FileField(upload_to='updates/videos/%Y/%m/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

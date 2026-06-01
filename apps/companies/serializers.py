@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Company, CompanySettings
+from .models import Company, CompanySettings, Partner
 
 class CompanySettingsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -31,4 +31,11 @@ class CompanySerializer(serializers.ModelSerializer):
             for attr, value in settings_data.items():
                 setattr(settings_instance, attr, value)
             settings_instance.save()
+            settings_instance.save()
         return instance
+
+class PartnerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Partner
+        fields = '__all__'
+        read_only_fields = ['id', 'created_at']

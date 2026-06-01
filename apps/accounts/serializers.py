@@ -10,10 +10,11 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     company_info = CompanySerializer(source='company', read_only=True)
+    linked_projects = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ['id', 'email', 'name', 'phone', 'role', 'company', 'company_info', 'avatar', 'is_active', 'created_at']
+        fields = ['id', 'email', 'name', 'phone', 'role', 'company', 'company_info', 'avatar', 'is_active', 'created_at', 'linked_projects']
         read_only_fields = ['id', 'created_at']
         extra_kwargs = {
             'password': {'write_only': True, 'required': False}
@@ -35,3 +36,7 @@ class UserSerializer(serializers.ModelSerializer):
             instance.set_password(password)
         instance.save()
         return instance
+    def get_linked_projects(self, obj):
+        if obj.role == 'client':
+            return [{'id': str(p.id), 'name': p.name} for p in obj.projects.all()]
+        return []

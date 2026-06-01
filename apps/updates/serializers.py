@@ -18,7 +18,8 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
         model = ProjectUpdate
         fields = [
             'id', 'project', 'title', 'description', 'phase_category',
-            'phase_category_name', 'created_by', 'created_by_name', 'created_at', 'photos', 'photo_urls', 'uploaded_photos'
+            'phase_category_name', 'created_by', 'created_by_name', 'created_at', 'photos', 'photo_urls', 'uploaded_photos',
+            'video_url', 'video_file'
         ]
         read_only_fields = ['id', 'created_at', 'created_by']
 
