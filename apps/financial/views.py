@@ -25,6 +25,11 @@ class ClientContributionViewSet(viewsets.ModelViewSet):
         user = self.request.user
         if user.role != 'super_admin':
             qs = qs.filter(project__company=user.company)
+        
+        project_id = self.request.query_params.get('project')
+        if project_id:
+            qs = qs.filter(project_id=project_id)
+            
         return qs
 
 class TransactionViewSet(TenantScopedMixin, viewsets.ModelViewSet):
