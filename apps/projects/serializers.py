@@ -12,10 +12,11 @@ class ProjectSerializer(serializers.ModelSerializer):
             'id', 'company', 'client', 'client_info', 'name', 'description', 'address',
             'start_date', 'planned_end_date', 'actual_end_date', 'status',
             'total_budget', 'quantity_units', 'value_per_unit', 'total_contract_value',
+            'cost_per_unit', 'total_labor_cost',
             'progress_percentage', 'cover_image', 'cover_image_url', 'slug',
             'employees', 'created_at', 'updated_at'
         ]
-        read_only_fields = ['id', 'total_contract_value', 'progress_percentage', 'slug', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'total_contract_value', 'total_labor_cost', 'progress_percentage', 'slug', 'created_at', 'updated_at']
         extra_kwargs = {
             'company': {'required': False, 'allow_null': True}
         }

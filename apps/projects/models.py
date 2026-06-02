@@ -23,6 +23,7 @@ class Project(models.Model):
     total_budget = models.DecimalField(max_digits=12, decimal_places=2)
     quantity_units = models.PositiveIntegerField(default=1)
     value_per_unit = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    cost_per_unit = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     progress_percentage = models.DecimalField(
         max_digits=5, decimal_places=2, default=0.00
     )  # auto-calculated from phases
