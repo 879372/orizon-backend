@@ -23,7 +23,6 @@ class MaterialOrderItemSerializer(serializers.ModelSerializer):
 
 class MaterialOrderSerializer(serializers.ModelSerializer):
     items = MaterialOrderItemSerializer(many=True)
-    total_value = serializers.DecimalField(max_digits=12, decimal_places=2, read_only=True)
 
     class Meta:
         model = MaterialOrder
