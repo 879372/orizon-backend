@@ -45,15 +45,14 @@ class MaterialOrder(models.Model):
         ('purchased', 'Comprado'),
         ('delivered', 'Entregue')
     ], default='draft')
+    expected_date = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    
-    @property
-    def total_value(self):
-        return sum(item.total_cost for item in self.items.all())
 
 class MaterialOrderItem(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     order = models.ForeignKey(MaterialOrder, on_delete=models.CASCADE, related_name='items')
     name = models.CharField(max_length=200)
     quantity = models.CharField(max_length=100)
-    total_cost = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+
+    def __str__(self):
+        return self.name

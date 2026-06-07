@@ -18,7 +18,7 @@ class MaterialSerializer(serializers.ModelSerializer):
 class MaterialOrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = MaterialOrderItem
-        fields = ['id', 'name', 'quantity', 'total_cost']
+        fields = ['id', 'name', 'quantity']
         read_only_fields = ['id']
 
 class MaterialOrderSerializer(serializers.ModelSerializer):
@@ -27,11 +27,8 @@ class MaterialOrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MaterialOrder
-        fields = [
-            'id', 'company', 'project', 'description', 'status',
-            'created_at', 'total_value', 'items'
-        ]
-        read_only_fields = ['id', 'created_at', 'company', 'total_value']
+        fields = ['id', 'company', 'project', 'description', 'status', 'expected_date', 'created_at', 'items']
+        read_only_fields = ['id', 'created_at', 'company']
 
     def create(self, validated_data):
         items_data = validated_data.pop('items', [])
