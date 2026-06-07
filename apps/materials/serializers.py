@@ -16,12 +16,10 @@ class MaterialSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_at', 'company']
 
 class MaterialOrderItemSerializer(serializers.ModelSerializer):
-    total_cost = serializers.DecimalField(max_digits=12, decimal_places=2, read_only=True)
-
     class Meta:
         model = MaterialOrderItem
-        fields = ['id', 'name', 'quantity', 'unit_cost', 'total_cost']
-        read_only_fields = ['id', 'total_cost']
+        fields = ['id', 'name', 'quantity', 'total_cost']
+        read_only_fields = ['id']
 
 class MaterialOrderSerializer(serializers.ModelSerializer):
     items = MaterialOrderItemSerializer(many=True)

@@ -55,9 +55,5 @@ class MaterialOrderItem(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     order = models.ForeignKey(MaterialOrder, on_delete=models.CASCADE, related_name='items')
     name = models.CharField(max_length=200)
-    quantity = models.DecimalField(max_digits=10, decimal_places=2)
-    unit_cost = models.DecimalField(max_digits=10, decimal_places=2)
-    
-    @property
-    def total_cost(self):
-        return self.quantity * self.unit_cost
+    quantity = models.CharField(max_length=100)
+    total_cost = models.DecimalField(max_digits=12, decimal_places=2, default=0)
