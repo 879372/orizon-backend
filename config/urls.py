@@ -10,7 +10,7 @@ from apps.companies.views import AdminCompanyViewSet, CompanyMeViewSet, PartnerV
 from apps.projects.views import ProjectViewSet
 from apps.phases.views import PhaseCategoryViewSet, PhaseTaskViewSet
 from apps.financial.views import TransactionViewSet, ExpenseCategoryViewSet, ClientContributionViewSet, GlobalFinancialSummaryViewSet
-from apps.materials.views import MaterialViewSet
+from apps.materials.views import MaterialViewSet, MaterialOrderViewSet
 from apps.employees.views import EmployeeViewSet
 from apps.suppliers.views import SupplierViewSet
 from apps.tasks.views import KanbanTaskViewSet
@@ -31,6 +31,7 @@ router.register('financial/categories', ExpenseCategoryViewSet, basename='expens
 router.register('financial/contributions', ClientContributionViewSet, basename='client-contribution')
 router.register('financial/global-summary', GlobalFinancialSummaryViewSet, basename='global-financial-summary')
 router.register('materials', MaterialViewSet, basename='material')
+router.register('material-orders', MaterialOrderViewSet, basename='material-order')
 router.register('employees', EmployeeViewSet, basename='employee')
 router.register('suppliers', SupplierViewSet, basename='supplier')
 router.register('kanban', KanbanTaskViewSet, basename='kanban-task')

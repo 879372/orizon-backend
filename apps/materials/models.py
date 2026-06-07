@@ -32,3 +32,32 @@ class Material(models.Model):
 
     def __str__(self):
         return self.name
+
+class MaterialOrder(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    company = models.ForeignKey('companies.Company', on_delete=models.CASCADE)
+    project = models.ForeignKey('projects.Project', on_delete=models.CASCADE, related_name='material_orders')
+    description = models.CharField(max_length=255, blank=True)
+    status = models.CharField(max_length=20, choices=[
+        ('draft', 'Rascunho'),
+        ('requested', 'Solicitado'),
+        ('approved', 'Aprovado'),
+        ('purchased', 'Comprado'),
+        ('delivered', 'Entregue')
+    ], default='draft')
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    @property
+    def total_value(self):
+        return sum(item.total_cost for item in self.items.all())
+
+class MaterialOrderItem(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    order = models.ForeignKey(MaterialOrder, on_delete=models.CASCADE, related_name='items')
+    name = models.CharField(max_length=200)
+    quantity = models.DecimalField(max_digits=10, decimal_places=2)
+    unit_cost = models.DecimalField(max_digits=10, decimal_places=2)
+    
+    @property
+    def total_cost(self):
+        return self.quantity * self.unit_cost
