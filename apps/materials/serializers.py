@@ -1,5 +1,8 @@
 from rest_framework import serializers
 from .models import Material, MaterialOrder, MaterialOrderItem, MaterialOrderSupplier
+from urllib.parse import urlparse, unquote
+from django.conf import settings
+from django.core.files.storage import default_storage
 
 class MaterialSerializer(serializers.ModelSerializer):
     supplier_name = serializers.CharField(source='supplier.name', read_only=True)
@@ -22,12 +25,51 @@ class MaterialOrderItemSerializer(serializers.ModelSerializer):
         read_only_fields = ['id']
 
 class MaterialOrderSupplierSerializer(serializers.ModelSerializer):
+    attachment_url = serializers.CharField(max_length=500, required=False, allow_blank=True, allow_null=True)
     items = MaterialOrderItemSerializer(many=True)
 
     class Meta:
         model = MaterialOrderSupplier
         fields = ['id', 'name', 'attachment_url', 'items']
         read_only_fields = ['id']
+
+    def to_internal_value(self, data):
+        data = data.copy() if hasattr(data, 'copy') else dict(data)
+        url = data.get('attachment_url')
+        if url and isinstance(url, str) and url.startswith('http') and ('X-Amz-Expires' in url or 'AWSAccessKeyId' in url or 'X-Amz-Signature' in url):
+            parsed = urlparse(url)
+            path = unquote(parsed.path)
+            if path.startswith('/'):
+                path = path[1:]
+            bucket = getattr(settings, 'AWS_STORAGE_BUCKET_NAME', '')
+            if bucket and path.startswith(f"{bucket}/"):
+                path = path[len(bucket)+1:]
+            data['attachment_url'] = path
+            
+        return super().to_internal_value(data)
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        url = data.get('attachment_url')
+        if url:
+            if not url.startswith('http'):
+                try:
+                    data['attachment_url'] = default_storage.url(url)
+                except Exception:
+                    pass
+            elif url.startswith('http') and ('X-Amz-Expires' in url or 'AWSAccessKeyId' in url or 'X-Amz-Signature' in url):
+                parsed = urlparse(url)
+                path = unquote(parsed.path)
+                if path.startswith('/'):
+                    path = path[1:]
+                bucket = getattr(settings, 'AWS_STORAGE_BUCKET_NAME', '')
+                if bucket and path.startswith(f"{bucket}/"):
+                    path = path[len(bucket)+1:]
+                try:
+                    data['attachment_url'] = default_storage.url(path)
+                except Exception:
+                    pass
+        return data
 
 class MaterialOrderSerializer(serializers.ModelSerializer):
     suppliers = MaterialOrderSupplierSerializer(many=True)
