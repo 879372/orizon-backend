@@ -62,8 +62,8 @@ class MaterialOrderItem(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     supplier = models.ForeignKey(MaterialOrderSupplier, on_delete=models.CASCADE, related_name='items', null=True, blank=True)
     name = models.CharField(max_length=200)
-    quantity = models.DecimalField(max_digits=10, decimal_places=2)
-    unit_value = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    quantity = models.CharField(max_length=50)
+    total_value = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     def __str__(self):
         return self.name

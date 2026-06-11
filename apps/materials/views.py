@@ -1,5 +1,9 @@
 from rest_framework import viewsets
 from .models import Material, MaterialOrder
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser
+from django.core.files.storage import default_storage
 from .serializers import MaterialSerializer, MaterialOrderSerializer
 from core.mixins import TenantScopedMixin
 from core.permissions import IsCompanyMember
@@ -27,3 +31,14 @@ class MaterialOrderViewSet(TenantScopedMixin, viewsets.ModelViewSet):
         else:
             project = serializer.validated_data.get('project')
             serializer.save(company=project.company)
+
+    @action(detail=False, methods=['post'], parser_classes=[MultiPartParser, FormParser])
+    def upload_attachment(self, request):
+        file_obj = request.FILES.get('file')
+        if not file_obj:
+            return Response({'error': 'Nenhum arquivo enviado'}, status=400)
+        
+        file_path = default_storage.save(f'material_receipts/{file_obj.name}', file_obj)
+        file_url = default_storage.url(file_path)
+        
+        return Response({'url': file_url})

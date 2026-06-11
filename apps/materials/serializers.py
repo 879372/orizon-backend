@@ -18,7 +18,7 @@ class MaterialSerializer(serializers.ModelSerializer):
 class MaterialOrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = MaterialOrderItem
-        fields = ['id', 'name', 'quantity', 'unit_value']
+        fields = ['id', 'name', 'quantity', 'total_value']
         read_only_fields = ['id']
 
 class MaterialOrderSupplierSerializer(serializers.ModelSerializer):
