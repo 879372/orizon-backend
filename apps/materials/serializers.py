@@ -76,7 +76,7 @@ class MaterialOrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MaterialOrder
-        fields = ['id', 'company', 'project', 'description', 'status', 'expected_date', 'delivery_address', 'created_at', 'suppliers']
+        fields = ['id', 'company', 'project', 'description', 'status', 'expected_date', 'order_date_start', 'order_date_end', 'delivery_address', 'created_at', 'suppliers']
         read_only_fields = ['id', 'created_at', 'company']
 
     def create(self, validated_data):

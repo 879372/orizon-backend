@@ -46,6 +46,8 @@ class MaterialOrder(models.Model):
         ('delivered', 'Entregue')
     ], default='draft')
     expected_date = models.DateField(null=True, blank=True)
+    order_date_start = models.DateField(null=True, blank=True)
+    order_date_end = models.DateField(null=True, blank=True)
     delivery_address = models.CharField(max_length=255, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
