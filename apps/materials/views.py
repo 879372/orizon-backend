@@ -21,7 +21,7 @@ class MaterialViewSet(TenantScopedMixin, viewsets.ModelViewSet):
             serializer.save(company=project.company)
 
 class MaterialOrderViewSet(TenantScopedMixin, viewsets.ModelViewSet):
-    queryset = MaterialOrder.objects.all().prefetch_related('items')
+    queryset = MaterialOrder.objects.all().prefetch_related('suppliers__items')
     serializer_class = MaterialOrderSerializer
     permission_classes = [IsCompanyMember]
 
