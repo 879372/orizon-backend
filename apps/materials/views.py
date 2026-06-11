@@ -1,7 +1,10 @@
 from rest_framework import viewsets
-from .models import Material, MaterialOrder
+from .models import Material, MaterialOrder, MaterialOrderSupplier
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from django.shortcuts import redirect
+from django.http import Http404
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.core.files.storage import default_storage
 from .serializers import MaterialSerializer, MaterialOrderSerializer
@@ -42,3 +45,18 @@ class MaterialOrderViewSet(TenantScopedMixin, viewsets.ModelViewSet):
         file_url = default_storage.url(file_path)
         
         return Response({'url': file_url})
+
+class MaterialOrderSupplierAttachmentView(APIView):
+    permission_classes = [] # Public access
+    
+    def get(self, request, supplier_id):
+        try:
+            supplier = MaterialOrderSupplier.objects.get(id=supplier_id)
+            from .serializers import MaterialOrderSupplierSerializer
+            serializer = MaterialOrderSupplierSerializer(supplier)
+            url = serializer.data.get('attachment_url')
+            if url:
+                return redirect(url)
+            raise Http404("Sem anexo")
+        except MaterialOrderSupplier.DoesNotExist:
+            raise Http404("Fornecedor não encontrado")

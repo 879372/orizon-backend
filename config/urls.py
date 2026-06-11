@@ -10,7 +10,7 @@ from apps.companies.views import AdminCompanyViewSet, CompanyMeViewSet, PartnerV
 from apps.projects.views import ProjectViewSet
 from apps.phases.views import PhaseCategoryViewSet, PhaseTaskViewSet
 from apps.financial.views import TransactionViewSet, ExpenseCategoryViewSet, ClientContributionViewSet, GlobalFinancialSummaryViewSet
-from apps.materials.views import MaterialViewSet, MaterialOrderViewSet
+from apps.materials.views import MaterialViewSet, MaterialOrderViewSet, MaterialOrderSupplierAttachmentView
 from apps.employees.views import EmployeeViewSet
 from apps.suppliers.views import SupplierViewSet
 from apps.tasks.views import KanbanTaskViewSet
@@ -47,6 +47,7 @@ urlpatterns = [
     
     # API endpoints
     path('api/', include(router.urls)),
+    path('api/s/<uuid:supplier_id>/', MaterialOrderSupplierAttachmentView.as_view(), name='short-attachment'),
     
     # OpenAPI Schema / Swagger docs
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
