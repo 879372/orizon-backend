@@ -9,7 +9,7 @@ from .models import FlowNode, FlowEdge, FlowNodeItem
 from .serializers import FlowNodeSerializer, FlowEdgeSerializer, FlowNodeItemSerializer
 
 
-class FlowNodeViewSet(TenantScopedMixin, viewsets.ModelViewSet):
+class FlowNodeViewSet(viewsets.ModelViewSet):
     queryset = FlowNode.objects.all()
     serializer_class = FlowNodeSerializer
     permission_classes = [IsCompanyMember]
@@ -18,6 +18,17 @@ class FlowNodeViewSet(TenantScopedMixin, viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = super().get_queryset()
+        user = self.request.user
+        if not user or not user.is_authenticated:
+            return qs.none()
+        
+        if user.role == 'super_admin':
+            company_id = self.request.headers.get('X-Company-ID')
+            if company_id:
+                qs = qs.filter(project__company_id=company_id)
+        else:
+            qs = qs.filter(project__company=user.company)
+            
         return qs.prefetch_related('items', 'incoming_edges__source')
 
     def perform_create(self, serializer):
@@ -57,12 +68,27 @@ class FlowNodeViewSet(TenantScopedMixin, viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class FlowEdgeViewSet(TenantScopedMixin, viewsets.ModelViewSet):
+class FlowEdgeViewSet(viewsets.ModelViewSet):
     queryset = FlowEdge.objects.all()
     serializer_class = FlowEdgeSerializer
     permission_classes = [IsCompanyMember]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['project']
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        user = self.request.user
+        if not user or not user.is_authenticated:
+            return qs.none()
+        
+        if user.role == 'super_admin':
+            company_id = self.request.headers.get('X-Company-ID')
+            if company_id:
+                qs = qs.filter(project__company_id=company_id)
+        else:
+            qs = qs.filter(project__company=user.company)
+            
+        return qs
 
     def perform_create(self, serializer):
         project_id = self.request.data.get('project')
@@ -88,8 +114,19 @@ class FlowNodeItemViewSet(viewsets.ModelViewSet):
     permission_classes = [IsCompanyMember]
 
     def get_queryset(self):
-        """Filtra por nó via query param se fornecido."""
         qs = super().get_queryset()
+        user = self.request.user
+        if not user or not user.is_authenticated:
+            return qs.none()
+            
+        if user.role == 'super_admin':
+            company_id = self.request.headers.get('X-Company-ID')
+            if company_id:
+                qs = qs.filter(node__project__company_id=company_id)
+        else:
+            qs = qs.filter(node__project__company=user.company)
+
+        """Filtra por nó via query param se fornecido."""
         node_id = self.request.query_params.get('node')
         if node_id:
             qs = qs.filter(node_id=node_id)
