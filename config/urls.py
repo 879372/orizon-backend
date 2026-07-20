@@ -15,6 +15,7 @@ from apps.employees.views import EmployeeViewSet
 from apps.suppliers.views import SupplierViewSet
 from apps.tasks.views import KanbanTaskViewSet
 from apps.updates.views import ProjectUpdateViewSet
+from apps.workflow.views import FlowNodeViewSet, FlowEdgeViewSet, FlowNodeItemViewSet
 
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
@@ -36,6 +37,9 @@ router.register('employees', EmployeeViewSet, basename='employee')
 router.register('suppliers', SupplierViewSet, basename='supplier')
 router.register('kanban', KanbanTaskViewSet, basename='kanban-task')
 router.register('updates', ProjectUpdateViewSet, basename='project-update')
+router.register('workflow/nodes', FlowNodeViewSet, basename='flow-node')
+router.register('workflow/edges', FlowEdgeViewSet, basename='flow-edge')
+router.register('workflow/items', FlowNodeItemViewSet, basename='flow-node-item')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'apps.suppliers.apps.SuppliersConfig',
     'apps.tasks.apps.TasksConfig',
     'apps.updates.apps.UpdatesConfig',
+    'apps.workflow.apps.WorkflowConfig',
 ]
 
 MIDDLEWARE = [
