@@ -35,6 +35,15 @@ class FlowNodeViewSet(viewsets.ModelViewSet):
         project_id = self.request.data.get('project')
         serializer.save(project_id=project_id)
 
+    def perform_update(self, serializer):
+        status_val = serializer.validated_data.get('status')
+        if status_val == 'done':
+            node = self.get_object()
+            if node.is_blocked_by_dependencies():
+                from rest_framework.exceptions import ValidationError
+                raise ValidationError({'detail': 'Não é possível concluir. Existem dependências não concluídas.'})
+        serializer.save()
+
     @action(detail=True, methods=['post'], url_path='items')
     def add_item(self, request, pk=None):
         node = self.get_object()
@@ -48,6 +57,13 @@ class FlowNodeViewSet(viewsets.ModelViewSet):
     def complete(self, request, pk=None):
         """Tenta marcar o nó como concluído. Rejeita se ainda há itens pendentes."""
         node = self.get_object()
+        
+        if node.is_blocked_by_dependencies():
+            return Response(
+                {'detail': 'Não é possível concluir. Existem dependências não concluídas.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
         pending_items = node.items.filter(is_done=False).count()
         if pending_items > 0:
             return Response(
