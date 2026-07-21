@@ -327,3 +327,22 @@ class ProjectViewSet(TenantScopedMixin, viewsets.ModelViewSet):
             'categories': categories_data,
             'updates': updates_data
         })
+
+    @action(detail=False, methods=['get'], url_path='public/(?P<project_id>[-\\w]+)/workflow', permission_classes=[permissions.AllowAny])
+    def public_workflow(self, request, project_id=None):
+        try:
+            project = Project.objects.get(id=project_id)
+        except Project.DoesNotExist:
+            return Response({"detail": "Projeto não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+        
+        from apps.workflow.models import FlowNode, FlowEdge
+        from apps.workflow.serializers import FlowNodeSerializer, FlowEdgeSerializer
+        
+        nodes = FlowNode.objects.filter(project=project).prefetch_related('items', 'incoming_edges__source')
+        edges = FlowEdge.objects.filter(project=project)
+        
+        return Response({
+            'project': ProjectSerializer(project).data,
+            'nodes': FlowNodeSerializer(nodes, many=True).data,
+            'edges': FlowEdgeSerializer(edges, many=True).data,
+        })
